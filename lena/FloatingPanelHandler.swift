@@ -46,11 +46,16 @@ final class FloatingPanelHandler {
             }
         )
         
+        // Center the panel before showing
+        panel.center()
+        
         // it's important to activate the NSApplication so that the window shows on top and takes the focus
         NSApplication.shared.activate()
         panel.makeKeyAndOrderFront(nil)
         panel.orderFrontRegardless()
-        panel.center()
+        
+        // Animate the panel appearance
+        panel.animateIn()
         
         self.panel = panel
     }

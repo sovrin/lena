@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import QuartzCore
 
 final class FloatingPanel<Content: View>: NSPanel {
 
@@ -53,7 +54,7 @@ final class FloatingPanel<Content: View>: NSPanel {
         standardWindowButton(.zoomButton)?.isHidden = true
 
         // set animations accordingly
-        animationBehavior = .utilityWindow
+        animationBehavior = .default
 
         // enable frost UI effect
         backgroundColor = .clear
@@ -95,5 +96,33 @@ final class FloatingPanel<Content: View>: NSPanel {
     // the oreviously opened app completely
     override var canBecomeMain: Bool {
         return false
+    }
+    
+    // Animate the panel appearance with subtle fade and slide up
+    func animateIn() {
+        // Set initial state - start slightly lower and transparent
+        alphaValue = 0
+        let originalFrame = frame
+        
+        // Slide up a few pixels (subtle movement)
+        let slideOffset: CGFloat = 8
+        let initialFrame = NSRect(
+            x: originalFrame.origin.x,
+            y: originalFrame.origin.y - slideOffset,
+            width: originalFrame.width,
+            height: originalFrame.height
+        )
+        setFrame(initialFrame, display: false)
+        
+        // Animate to final state with subtle timing
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.25
+            // Very smooth ease-out for subtle feel
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            context.allowsImplicitAnimation = true
+            
+            self.animator().alphaValue = 1.0
+            self.animator().setFrame(originalFrame, display: true)
+        }
     }
 }
