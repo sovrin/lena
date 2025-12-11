@@ -12,26 +12,95 @@ struct SearchResult: View {
     let results: [TranslationResult]
 
     var body: some View {
-        if let msg = errorMessage {
-            Text(msg).foregroundStyle(.red).padding(.horizontal)
-        }
+        VStack(spacing: 12) {
+            if let msg = errorMessage {
+                Text(msg)
+                    .font(.callout)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+            }
 
-        VStack {
             List(results) { item in
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(item.sourceTranslation.text)
-                        .font(.headline)
+                HStack(alignment: .firstTextBaseline, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(item.sourceTranslation.text)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                            .lineLimit(3)
+                            .multilineTextAlignment(.leading)
 
-                    Text(item.targetTranslation.text)
-                        .font(.body)
-                        .foregroundStyle(.secondary)
+                        if let detail = inlineMeta(
+                            for: item.sourceTranslation.meta
+                        ) {
+                            Text(detail)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Image(systemName: "arrow.left.and.right")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+
+                    VStack(alignment: .trailing, spacing: 6) {
+                        Text(item.targetTranslation.text)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                            .lineLimit(3)
+                            .multilineTextAlignment(.trailing)
+
+                        if let detail = inlineMeta(
+                            for: item.targetTranslation.meta
+                        ) {
+                            Text(detail)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .padding()
+                .padding(14)
+                .background {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(.background.secondary)
+                        .overlay {
+                            RoundedRectangle(
+                                cornerRadius: 14,
+                                style: .continuous
+                            )
+                            .strokeBorder(.quaternary, lineWidth: 1)
+                        }
+                }
+                .contentShape(Rectangle())
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
             }
 
             .listStyle(.plain)
         }
         .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 20))
+    }
+
+    // Create a compact, optional inline meta summary from TranslationMeta
+    private func inlineMeta(for meta: TranslationMeta) -> String? {
+        var parts: [String] = []
+        if let cls = meta.wordClassDefinitions.first, !cls.isEmpty {
+            parts.append(cls)
+        }
+        if let abbr = meta.abbreviations.first, !abbr.isEmpty {
+            parts.append(abbr)
+        }
+        if let comment = meta.comments.first, !comment.isEmpty {
+            parts.append(comment)
+        }
+        guard !parts.isEmpty else { return nil }
+        return parts.joined(separator: " • ")
     }
 }
 
@@ -43,23 +112,44 @@ struct SearchResult: View {
                 sourceTranslation: Translation(
                     text: "Hallo",
                     meta: TranslationMeta(
-                        abbreviations: [],
-                        comments: [],
+                        abbreviations: ["abbr"],
+                        comments: ["colloquial"],
                         optionalData: [],
-                        wordClassDefinitions: []
+                        wordClassDefinitions: ["interj."]
                     )
                 ),
                 targetTranslation: Translation(
                     text: "Hello",
                     meta: TranslationMeta(
                         abbreviations: [],
-                        comments: [],
+                        comments: ["informal"],
                         optionalData: [],
-                        wordClassDefinitions: []
+                        wordClassDefinitions: ["interjection"]
                     )
                 ),
                 targetTranslationAudioUrl: nil
-            )
+            ),
+            TranslationResult(
+                sourceTranslation: Translation(
+                    text: "Haus",
+                    meta: TranslationMeta(
+                        abbreviations: [],
+                        comments: [],
+                        optionalData: [],
+                        wordClassDefinitions: ["noun"]
+                    )
+                ),
+                targetTranslation: Translation(
+                    text: "House",
+                    meta: TranslationMeta(
+                        abbreviations: [],
+                        comments: [],
+                        optionalData: [],
+                        wordClassDefinitions: ["noun"]
+                    )
+                ),
+                targetTranslationAudioUrl: nil
+            ),
         ]
     )
 }
