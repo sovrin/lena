@@ -8,37 +8,28 @@
 import SwiftUI
 
 struct SearchResult: View {
+    @EnvironmentObject var vm: TranslationSearchViewModel
 
     var body: some View {
-        HStack(spacing: 16) {
-            Menu {
-                Button("Button 1", action: test)
-                Button(
-                    "Button 2",
-                    systemImage: "button.vertical.left.press",
-                    action: test
-                )
-                Button(action: test) {
-                    Text("Button 3")
-                    Text("Description 3")
-                }
-            } label: {
-                Text("Button 0")
-            } primaryAction: {
-                print("Button 0 tapped")
+        if let msg = vm.errorMessage {
+            Text(msg).foregroundStyle(.red).padding(.horizontal)
+        }
+
+        List(vm.results) { item in
+            VStack(alignment: .leading, spacing: 6) {
+                Text(item.sourceTranslation.text)
+                    .font(.headline)
+
+                Text(item.targetTranslation.text)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
             }
         }
-        .padding()
-        .glassEffect(.regular.interactive())
+        .listStyle(.plain)
     }
-
-    func test() {
-
-    }
-
 }
 
 #Preview {
     SearchResult()
-
+        .environmentObject(TranslationSearchViewModel())
 }

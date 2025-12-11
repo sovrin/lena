@@ -8,8 +8,20 @@
 import SwiftUI
 
 struct SearchBar: View {
-    @FocusState private var focused: Bool
     @EnvironmentObject var vm: TranslationSearchViewModel
+
+    @FocusState private var focused: Bool
+
+    private var sourceOptions: [String] {
+        TranslationSearchViewModel.supportedLanguages.filter {
+            $0 != vm.targetLanguage
+        }
+    }
+    private var targetOptions: [String] {
+        TranslationSearchViewModel.supportedLanguages.filter {
+            $0 != vm.sourceLanguage
+        }
+    }
 
     var body: some View {
         HStack(spacing: 16) {
@@ -35,7 +47,7 @@ struct SearchBar: View {
             HStack(spacing: 6) {
                 CompactCodePicker(
                     selection: $vm.sourceLanguage,
-                    options: TranslationSearchViewModel.supportedLanguages
+                    options: sourceOptions
                 )
 
                 Image(systemName: "chevron.right")
@@ -44,13 +56,12 @@ struct SearchBar: View {
 
                 CompactCodePicker(
                     selection: $vm.targetLanguage,
-                    options: TranslationSearchViewModel.supportedLanguages
+                    options: targetOptions
                 )
             }
         }
         .onAppear { focused = true }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding()
         .glassEffect(.regular.interactive())
     }
 }

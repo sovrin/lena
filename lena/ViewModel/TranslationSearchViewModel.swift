@@ -16,13 +16,18 @@ final class TranslationSearchViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     // Language selections (source -> target)
-    @Published var sourceLanguage: String = "de"
-    @Published var targetLanguage: String = "en"
+    @Published var sourceLanguage: String = "de" {
+        didSet { languageSelectionDidChange() }
+    }
+    @Published var targetLanguage: String = "en" {
+        didSet { languageSelectionDidChange() }
+    }
 
     // Supported languages
     static let supportedLanguages: [String] = [
-        "bg","bs","cs","da","de","el","en","eo","es","fi","fr","hr","hu","is",
-        "it","la","nl","no","pl","pt","ro","ru","sk","sq","sr","sv","tr"
+        "bg", "bs", "cs", "da", "de", "el", "en", "eo", "es", "fi", "fr", "hr",
+        "hu", "is", "it", "la", "nl", "no", "pl", "pt", "ro", "ru", "sk", "sq",
+        "sr", "sv", "tr",
     ]
 
     private var debounceTask: Task<Void, Never>?
@@ -38,7 +43,7 @@ final class TranslationSearchViewModel: ObservableObject {
         }
 
         debounceTask = Task {
-            try? await Task.sleep(nanoseconds: 300_000_000)
+            try? await Task.sleep(nanoseconds: 500_000_000)
             guard !Task.isCancelled else { return }
             await fetch(q)
         }
@@ -49,12 +54,10 @@ final class TranslationSearchViewModel: ObservableObject {
         errorMessage = nil
         defer { isLoading = false }
 
-        // Keeping your current hardcoded path for now.
-        // Later we can build from sourceLanguage-targetLanguage:
-        // "http://localhost:3000/translate/\(sourceLanguage)-\(targetLanguage)"
-        var components = URLComponents(
-            string: "http://localhost:3000/translate/de-en"
-        )!
+        // Build URL from current language selections
+        let path =
+            "http://localhost:3000/translate/\(sourceLanguage)-\(targetLanguage)"
+        var components = URLComponents(string: path)!
         components.queryItems = [URLQueryItem(name: "query", value: q)]
 
         guard let url = components.url else {
@@ -86,5 +89,11 @@ final class TranslationSearchViewModel: ObservableObject {
             results = []
         }
     }
-}
 
+    // When languages change, re-run the search if there is a non-empty query
+    private func languageSelectionDidChange() {
+        let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return }
+        scheduleDebouncedSearch(q)
+    }
+}
