@@ -20,7 +20,9 @@ struct SearchBar: View {
             } else {
                 Image(systemName: "translate")
                     .resizable()
+                    .scaledToFit()
                     .frame(width: 24, height: 24)
+                    .foregroundStyle(.secondary)
             }
 
             TextField("Translate", text: $vm.query)
@@ -28,9 +30,27 @@ struct SearchBar: View {
                 .textFieldStyle(.plain)
                 .focused($focused)
 
+            Spacer(minLength: 6)
+
+            HStack(spacing: 6) {
+                CompactCodePicker(
+                    selection: $vm.sourceLanguage,
+                    options: TranslationSearchViewModel.supportedLanguages
+                )
+
+                Image(systemName: "chevron.right")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+
+                CompactCodePicker(
+                    selection: $vm.targetLanguage,
+                    options: TranslationSearchViewModel.supportedLanguages
+                )
+            }
         }
         .onAppear { focused = true }
-        .padding()
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
         .glassEffect(.regular.interactive())
     }
 }

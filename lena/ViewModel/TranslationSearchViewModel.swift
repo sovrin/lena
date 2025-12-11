@@ -15,6 +15,16 @@ final class TranslationSearchViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
+    // Language selections (source -> target)
+    @Published var sourceLanguage: String = "de"
+    @Published var targetLanguage: String = "en"
+
+    // Supported languages
+    static let supportedLanguages: [String] = [
+        "bg","bs","cs","da","de","el","en","eo","es","fi","fr","hr","hu","is",
+        "it","la","nl","no","pl","pt","ro","ru","sk","sq","sr","sv","tr"
+    ]
+
     private var debounceTask: Task<Void, Never>?
 
     func scheduleDebouncedSearch(_ newValue: String) {
@@ -39,6 +49,9 @@ final class TranslationSearchViewModel: ObservableObject {
         errorMessage = nil
         defer { isLoading = false }
 
+        // Keeping your current hardcoded path for now.
+        // Later we can build from sourceLanguage-targetLanguage:
+        // "http://localhost:3000/translate/\(sourceLanguage)-\(targetLanguage)"
         var components = URLComponents(
             string: "http://localhost:3000/translate/de-en"
         )!
@@ -74,3 +87,4 @@ final class TranslationSearchViewModel: ObservableObject {
         }
     }
 }
+
