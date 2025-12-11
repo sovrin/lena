@@ -27,9 +27,8 @@ struct HotkeyView: View {
                 .focused($focused)
         }
         .padding()
-        .background(.ultraThinMaterial)
-        //.foregroundStyle(.red)
         .frame(width: 400)
+        .background(.ultraThinMaterial)
         .onAppear {
             focused = true
         }

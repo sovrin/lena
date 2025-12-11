@@ -55,6 +55,11 @@ final class FloatingPanel<Content: View>: NSPanel {
         // set animations accordingly
         animationBehavior = .utilityWindow
 
+        // enable frost UI effect
+        backgroundColor = .clear
+        isOpaque = false
+        hasShadow = true
+
         // set the contentview
         // the safe area is ignored because the title bar still interfereswith the geometry
         contentView = NSHostingViewIgnoringSafeArea(
