@@ -8,32 +8,43 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var vm = TranslationSearchViewModel()
 
-    @State
-    private var text: String = ""
-
-    @FocusState
-    private var focused
 
     var body: some View {
-        HStack {
-            HStack(spacing: 16) {
-                Image(systemName: "translate")
-                    .resizable()
-                    .frame(width: 24, height: 24)
+        VStack {
+            SearchBar()
+                .environmentObject(vm)
 
-                TextField("Translate", text: $text)
-                    .font(.title)
-                    .textFieldStyle(.plain)
-                    .focused($focused)
+            if let msg = vm.errorMessage {
+                Text(msg).foregroundStyle(.red).padding(.horizontal)
             }
-            .padding()
+            
+            if vm.results.isEmpty {
+                ContentUnavailableView
+                    .search(text: vm.query)
+            }
+
+            List(vm.results) { item in
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(item.sourceTranslation.text)
+                        .font(.headline)
+
+                    Text(item.targetTranslation.text)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .listStyle(.plain)
         }
-        .glassEffect(.clear)
         .padding()
-        .onAppear {
-            focused = true
+        .onChange(of: vm.query) { _, newValue in
+            vm.scheduleDebouncedSearch(newValue)
         }
+    }
+
+    func test() {
+
     }
 }
 

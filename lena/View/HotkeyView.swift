@@ -13,6 +13,6 @@ struct HotkeyView: View {
         HStack {
             ContentView()
         }
-        .frame(width: 750)
+        .frame(width: 750, height: 420)
     }
 }
