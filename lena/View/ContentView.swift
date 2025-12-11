@@ -12,11 +12,17 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            SearchBar()
-                .environmentObject(vm)
+            SearchBar(
+                query: $vm.query,
+                sourceLanguage: $vm.sourceLanguage,
+                targetLanguage: $vm.targetLanguage,
+                isLoading: vm.isLoading
+            )
 
-            SearchResult()
-                .environmentObject(vm)
+            SearchResult(
+                errorMessage: vm.errorMessage,
+                results: vm.results
+            )
         }
         .padding()
         .onChange(of: vm.query) { _, newValue in
@@ -28,3 +34,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+

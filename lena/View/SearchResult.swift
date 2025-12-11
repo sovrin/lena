@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct SearchResult: View {
-    @EnvironmentObject var vm: TranslationSearchViewModel
+    let errorMessage: String?
+    let results: [TranslationResult]
 
     var body: some View {
-        if let msg = vm.errorMessage {
+        if let msg = errorMessage {
             Text(msg).foregroundStyle(.red).padding(.horizontal)
         }
 
-        List(vm.results) { item in
+        List(results) { item in
             VStack(alignment: .leading, spacing: 6) {
                 Text(item.sourceTranslation.text)
                     .font(.headline)
@@ -30,6 +31,31 @@ struct SearchResult: View {
 }
 
 #Preview {
-    SearchResult()
-        .environmentObject(TranslationSearchViewModel())
+    SearchResult(
+        errorMessage: nil,
+        results: [
+            TranslationResult(
+                sourceTranslation: Translation(
+                    text: "Hallo",
+                    meta: TranslationMeta(
+                        abbreviations: [],
+                        comments: [],
+                        optionalData: [],
+                        wordClassDefinitions: []
+                    )
+                ),
+                targetTranslation: Translation(
+                    text: "Hello",
+                    meta: TranslationMeta(
+                        abbreviations: [],
+                        comments: [],
+                        optionalData: [],
+                        wordClassDefinitions: []
+                    )
+                ),
+                targetTranslationAudioUrl: nil
+            )
+        ]
+    )
 }
+
