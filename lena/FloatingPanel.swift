@@ -62,7 +62,7 @@ final class FloatingPanel<Content: View>: NSPanel {
         hasShadow = false
 
         // set the contentview
-        // the safe area is ignored because the title bar still interfereswith the geometry
+        // the safe area is ignored because the title bar still interferes with the geometry
         contentView = NSHostingViewIgnoringSafeArea(
             rootView: view()
         )
