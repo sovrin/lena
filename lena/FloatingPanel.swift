@@ -54,12 +54,12 @@ final class FloatingPanel<Content: View>: NSPanel {
         standardWindowButton(.zoomButton)?.isHidden = true
 
         // set animations accordingly
-        animationBehavior = .default
+        animationBehavior = .utilityWindow
 
         // enable frost UI effect
         backgroundColor = .clear
         isOpaque = false
-        hasShadow = true
+        hasShadow = false
 
         // set the contentview
         // the safe area is ignored because the title bar still interfereswith the geometry

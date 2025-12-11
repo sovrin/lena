@@ -46,15 +46,36 @@ final class FloatingPanelHandler {
             }
         )
         
-        // Center the panel before showing
-        panel.center()
-        
         // it's important to activate the NSApplication so that the window shows on top and takes the focus
         NSApplication.shared.activate()
         panel.makeKeyAndOrderFront(nil)
         panel.orderFrontRegardless()
+                
+        // Force layout to ensure panel has its final size
+        panel.display()
         
-        // Animate the panel appearance
+        // Center the panel properly (center of panel, not just origin)
+        if let screen = NSScreen.main {
+            let screenFrame = screen.visibleFrame
+            let panelSize = panel.frame.size
+            
+            // Calculate center position: screen center minus half of panel size
+            let centerX = screenFrame.midX - (panelSize.width / 2)
+            let centerY = (screenFrame.midY * 1.25) - (panelSize.height / 2)
+            
+            let centeredFrame = NSRect(
+                x: centerX,
+                y: centerY,
+                width: panelSize.width,
+                height: panelSize.height
+            )
+            panel.setFrame(centeredFrame, display: false)
+        } else {
+            // Fallback to standard center if no screen found
+            panel.center()
+        }
+        
+        // Animate the panel appearance after centering
         panel.animateIn()
         
         self.panel = panel
