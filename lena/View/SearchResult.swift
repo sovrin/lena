@@ -16,17 +16,22 @@ struct SearchResult: View {
             Text(msg).foregroundStyle(.red).padding(.horizontal)
         }
 
-        List(results) { item in
-            VStack(alignment: .leading, spacing: 6) {
-                Text(item.sourceTranslation.text)
-                    .font(.headline)
+        VStack {
+            List(results) { item in
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(item.sourceTranslation.text)
+                        .font(.headline)
 
-                Text(item.targetTranslation.text)
-                    .font(.body)
-                    .foregroundStyle(.secondary)
+                    Text(item.targetTranslation.text)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
             }
+
+            .listStyle(.plain)
         }
-        .listStyle(.plain)
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 20))
     }
 }
 
@@ -58,4 +63,3 @@ struct SearchResult: View {
         ]
     )
 }
-
