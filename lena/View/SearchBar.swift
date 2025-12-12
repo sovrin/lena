@@ -53,9 +53,18 @@ struct SearchBar: View {
                     options: sourceOptions
                 )
 
-                Image(systemName: "chevron.right")
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                Button {
+                    swapLanguages()
+                } label: {
+                    Image(systemName: "arrow.left.arrow.right")
+                        .symbolRenderingMode(.hierarchical)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .contentShape(Rectangle())
+                        .help("Swap languages")
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut("s", modifiers: [.command, .shift])
 
                 CompactCodePicker(
                     selection: $targetLanguage,
@@ -66,6 +75,16 @@ struct SearchBar: View {
         .onAppear { focused = true }
         .padding()
         .glassEffect(.regular.interactive())
+    }
+
+    private func swapLanguages() {
+        let wasFocused = focused
+        let tmp = sourceLanguage
+        sourceLanguage = targetLanguage
+        targetLanguage = tmp
+        if wasFocused {
+            focused = true
+        }
     }
 }
 
@@ -81,4 +100,3 @@ struct SearchBar: View {
         isLoading: false
     )
 }
-
