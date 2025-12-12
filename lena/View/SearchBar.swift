@@ -75,6 +75,7 @@ struct SearchBar: View {
         .onAppear { focused = true }
         .padding()
         .glassEffect(.regular.interactive())
+        .shadow(radius: 8)
     }
 
     private func swapLanguages() {
