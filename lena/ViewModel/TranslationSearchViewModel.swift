@@ -54,14 +54,20 @@ final class TranslationSearchViewModel: ObservableObject {
         errorMessage = nil
         defer { isLoading = false }
 
+        // Read server endpoint from user defaults (set via AppStorage in Settings)
+        let endpoint = (UserDefaults.standard.string(forKey: "serverEndpoint")?
+            .trimmingCharacters(in: .whitespacesAndNewlines))
+            .flatMap { $0.isEmpty ? nil : $0 }
+            ?? "http://localhost:3000"
+
         // Build URL from current language selections
-        let path =
-            "http://localhost:3000/translate/\(sourceLanguage)-\(targetLanguage)"
+        let path = "\(endpoint)/translate/\(sourceLanguage)-\(targetLanguage)"
         var components = URLComponents(string: path)!
         components.queryItems = [URLQueryItem(name: "query", value: q)]
 
         guard let url = components.url else {
             errorMessage = "Bad URL"
+            results = []
             return
         }
 
@@ -70,7 +76,7 @@ final class TranslationSearchViewModel: ObservableObject {
             guard !Task.isCancelled else { return }
 
             if let http = response as? HTTPURLResponse,
-                !(200...299).contains(http.statusCode)
+               !(200...299).contains(http.statusCode)
             {
                 errorMessage = "Server error: \(http.statusCode)"
                 results = []
